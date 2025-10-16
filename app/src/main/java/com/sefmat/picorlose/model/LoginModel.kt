@@ -8,5 +8,5 @@ class LoginModel {
     // Nombre de Usuario
     var username by mutableStateOf("")
     // Contraseña
-    var passwrd by mutableStateOf("")
+    var password by mutableStateOf("")
 }

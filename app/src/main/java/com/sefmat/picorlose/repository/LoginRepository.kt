@@ -7,11 +7,19 @@ class LoginRepository {
 
     fun getLogin(): LoginModel = login
 
+    // WIP
     fun validUsername(): Boolean {
-        return false // WIP
+        if(login.username != "")
+            return true
+        else
+            return false
     }
 
+    // WIP
     fun validPassword(): Boolean {
-        return false // WIP
+        if(login.password != "")
+            return true
+        else
+            return false
     }
 }

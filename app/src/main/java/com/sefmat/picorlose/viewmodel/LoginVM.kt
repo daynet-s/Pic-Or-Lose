@@ -7,20 +7,32 @@ import androidx.lifecycle.ViewModel
 import com.sefmat.picorlose.model.LoginModel
 import com.sefmat.picorlose.repository.LoginRepository
 
-class LoginViewModel : ViewModel() {
+class LoginVM : ViewModel() {
     private val repository = LoginRepository()
 
     var login: LoginModel by mutableStateOf(repository.getLogin())
 
     fun verifyName(): Boolean {
-        return false // WIP
+        if (repository.validUsername()) {
+            return true
+        }
+        else {
+            return false
+        }
+        return repository.validUsername()
     }
 
     fun verifyPassword(): Boolean {
-        return false // WIP
+        if (repository.validPassword()) {
+            return true
+        }
+        else {
+            return false
+        }
+        return repository.validPassword()
     }
 
     fun verifyLogin(): Boolean {
-        return false // WIP
+        return verifyName() && verifyPassword()
     }
 }

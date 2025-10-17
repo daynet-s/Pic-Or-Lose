@@ -12,15 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.sefmat.picorlose.ui.theme.PicOrLoseTheme
+import com.sefmat.picorlose.ui.theme.Login
+import com.sefmat.picorlose.viewmodel.LoginVM
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel = LoginVM()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PicOrLoseTheme {
-                    //test
-                }
+                Login(viewModel)
             }
         }
     }

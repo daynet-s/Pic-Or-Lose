@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PicOrLoseTheme {
-                Navegation(viewModel, NavController)
+                Navegation()
                 //Login(viewModel)
             }
         }

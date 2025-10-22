@@ -17,6 +17,7 @@ import com.sefmat.picorlose.ui.theme.PicOrLoseTheme
 import com.sefmat.picorlose.ui.theme.Login
 import com.sefmat.picorlose.ui.theme.Navegation
 import com.sefmat.picorlose.viewmodel.LoginVM
+import com.sefmat.picorlose.ui.theme.Camera
 
 class MainActivity : ComponentActivity() {
 
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PicOrLoseTheme {
                 Navegation()
+                //Camera()
                 //Login(viewModel)
             }
         }

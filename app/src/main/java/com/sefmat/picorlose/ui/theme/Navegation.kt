@@ -1,9 +1,12 @@
 package com.sefmat.picorlose.ui.theme
 
 import android.icu.text.CaseMap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -15,11 +18,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sefmat.picorlose.R
 import com.sefmat.picorlose.viewmodel.LoginVM
 
 @Composable
@@ -28,14 +34,15 @@ fun Navegation() {
     val loginViewModel = LoginVM()
 
     NavHost(navController, startDestination = "login") {
-        composable("login") { Login(loginViewModel, navController)} //????
-        /*composable("menu") {  }
-        composable("ranking") {  }
-        composable("camera") {  }*/
+        composable("login") { Login(loginViewModel, navController) }
+        composable("menu") { Menu(navController) }
+        composable("ranking") { Rankings(navController) }
+        //composable("camera") {  }
     }
 }
 
-@Composable // AVERIGUAR COMO HACER QUE FUNCIONE CON EL VM
+//AVERIGUAR COMO USAR MENSAJES DE ERROR
+@Composable
 fun Login(viewModel: LoginVM, navController: NavController) {
     var check by remember { mutableStateOf(false) }
     Column(
@@ -47,31 +54,34 @@ fun Login(viewModel: LoginVM, navController: NavController) {
 
         OutlinedTextField(
             value = viewModel.login.username,
-            onValueChange =  { viewModel.login.username = it },
+            onValueChange =  { newText -> viewModel.login.username = newText },
             label = { Text("Ingrese nombre de usuario") },
-            isError = !viewModel.verifyName()
+            isError = !viewModel.verifyName(),
+            supportingText = { Text(viewModel.errorMsg.username, color = androidx.compose.ui.graphics.Color.Red) }
         )
         OutlinedTextField(
             value = viewModel.login.password,
-            onValueChange =  { viewModel.login.password = it },
+            onValueChange =  { newText -> viewModel.login.password = newText },
             label = { Text("Ingrese contraseña") },
-            isError = !viewModel.verifyPassword()
+            isError = !viewModel.verifyPassword(),
+            supportingText = { Text(viewModel.errorMsg.password, color = androidx.compose.ui.graphics.Color.Red) }
             // Agregar linea para ocultar la contraseña
         )
 
         // WIP
         Button(
-            enabled = viewModel.verifyLogin(),
+            /*enabled = viewModel.verifyLogin(),*/
             onClick = {
                 if(viewModel.verifyLogin()) {
-                    check = true
+                    //check = true
+                    navController.navigate("menu")
                 }
             }
         ) {
             Text("OK")
         }
 
-        if (check) {
+        /*if (check) {
             AlertDialog(
                 onDismissRequest = { },
                 title = { Text("WIP") },
@@ -80,7 +90,7 @@ fun Login(viewModel: LoginVM, navController: NavController) {
                     Button(onClick = { check = false }) { Text("OK") }
                 }
             )
-        }
+        }*/
     }
 }
 
@@ -92,12 +102,20 @@ fun Menu(navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Image(
+            painter = painterResource(R.drawable.camera),
+            contentDescription = "TEST",
+            contentScale = ContentScale.Fit
+        )
+
         Text("PIC OR LOSE")
+        Spacer(modifier = Modifier.height(16.dp))
         Text("Tema de hoy: SEMAFOROS")
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-
+                // BOTON QUE LLEVE A CAMARA
             }
         ) {
             Text("JUGAR")
@@ -105,10 +123,20 @@ fun Menu(navController: NavController) {
 
         Button(
             onClick = {
-
+                navController.navigate("ranking")
             }
         ) {
             Text("PUNTAJES")
+        }
+
+        Spacer(modifier = Modifier.height(84.dp))
+
+        Button(
+            onClick = {
+                navController.navigate("login")
+            }
+        ) {
+            Text("CERRAR SESION")
         }
     }
 }
@@ -121,12 +149,13 @@ fun Rankings(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("PUNTAJES GLOBALES")
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Aqui iria el ranking
 
         Button(
             onClick = {
-
+                navController.navigate("menu")
             }
         ) {
             Text("VOLVER")

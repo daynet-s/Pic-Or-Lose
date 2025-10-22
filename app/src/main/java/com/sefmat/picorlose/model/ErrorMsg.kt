@@ -1,3 +1,10 @@
 package com.sefmat.picorlose.model
 
-//WIP
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
+class ErrorMsg {
+    var username: String = ""
+    var password: String = ""
+}

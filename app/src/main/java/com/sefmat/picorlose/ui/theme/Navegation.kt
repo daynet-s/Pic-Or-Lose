@@ -27,6 +27,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sefmat.picorlose.R
 import com.sefmat.picorlose.viewmodel.LoginVM
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
+
+
+data class Usuario(val nombre:String, val puntos:Int)
 
 @Composable
 fun Navegation() {
@@ -143,6 +150,19 @@ fun Menu(navController: NavController) {
 
 @Composable
 fun Rankings(navController: NavController) {
+    val Usuarios = listOf(
+        Usuario("fau37", 340),
+        Usuario("polix", 335),
+        Usuario("p**syDestroyer", 315),
+        Usuario("User3928", 285),
+        Usuario("Lux1", 280),
+        Usuario("yoni", 245),
+        Usuario("juliii", 240),
+        Usuario("gus", 240),
+        Usuario("dieg77", 235),
+        Usuario("naxopro", 230)
+    ).sortedByDescending { it.puntos }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -151,7 +171,21 @@ fun Rankings(navController: NavController) {
         Text("PUNTAJES GLOBALES")
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Aqui iria el ranking
+        // Codigo del ranking
+        androidx.compose.foundation.lazy.LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp),
+            horizontalAlignment = Alignment.Start,
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp)
+        ) {
+            itemsIndexed(Usuarios) { index, usuario ->
+                RankingRow(position = index + 1, usuario = usuario)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+
+
 
         Button(
             onClick = {
@@ -160,5 +194,16 @@ fun Rankings(navController: NavController) {
         ) {
             Text("VOLVER")
         }
+    }
+}
+
+@Composable
+fun RankingRow(position: Int, usuario: Usuario) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "$position. ${usuario.nombre}")
+        Text(text = "${usuario.puntos} pts")
     }
 }

@@ -153,7 +153,7 @@ fun Rankings(navController: NavController) {
     val Usuarios = listOf(
         Usuario("fau37", 340),
         Usuario("polix", 335),
-        Usuario("p**syDestroyer", 315),
+        Usuario("daDestroyer", 315),
         Usuario("User3928", 285),
         Usuario("Lux1", 280),
         Usuario("yoni", 245),

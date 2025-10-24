@@ -1,6 +1,12 @@
 package com.sefmat.picorlose.ui.theme
 
+import android.Manifest
+import android.graphics.Bitmap
 import android.icu.text.CaseMap
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +36,14 @@ import com.sefmat.picorlose.viewmodel.LoginVM
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import java.io.File
 
 
 data class Usuario(val nombre:String, val puntos:Int)
@@ -44,14 +57,12 @@ fun Navegation() {
         composable("login") { Login(loginViewModel, navController) }
         composable("menu") { Menu(navController) }
         composable("ranking") { Rankings(navController) }
-        //composable("camera") {  }
+        composable("camera") { Camera(navController) }
     }
 }
 
-//AVERIGUAR COMO USAR MENSAJES DE ERROR
 @Composable
 fun Login(viewModel: LoginVM, navController: NavController) {
-    var check by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -75,33 +86,19 @@ fun Login(viewModel: LoginVM, navController: NavController) {
             // Agregar linea para ocultar la contraseña
         )
 
-        // WIP
         Button(
-            /*enabled = viewModel.verifyLogin(),*/
             onClick = {
                 if(viewModel.verifyLogin()) {
-                    //check = true
                     navController.navigate("menu")
                 }
             }
         ) {
             Text("OK")
         }
-
-        /*if (check) {
-            AlertDialog(
-                onDismissRequest = { },
-                title = { Text("WIP") },
-                text = { Text("ESTO LLEVARA AL MENU") },
-                confirmButton = {
-                    Button(onClick = { check = false }) { Text("OK") }
-                }
-            )
-        }*/
     }
 }
 
-// WIP
+
 @Composable
 fun Menu(navController: NavController) {
     Column(
@@ -122,7 +119,7 @@ fun Menu(navController: NavController) {
 
         Button(
             onClick = {
-                // BOTON QUE LLEVE A CAMARA
+                navController.navigate("camera")
             }
         ) {
             Text("JUGAR")
@@ -205,5 +202,66 @@ fun RankingRow(position: Int, usuario: Usuario) {
     ) {
         Text(text = "$position. ${usuario.nombre}")
         Text(text = "${usuario.puntos} pts")
+    }
+}
+
+@Composable
+fun Camera(navController: NavController) {
+    val context = LocalContext.current
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var permisoConcedido by remember { mutableStateOf(false) }
+
+    val camLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success && imageUri != null) {
+            val bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            bitmap = bmp
+        }
+    }
+
+    val camPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        permisoConcedido = granted
+        if (granted) {
+            val file = File.createTempFile("taken_photo", ".jpg", context.cacheDir)
+            file.deleteOnExit()
+            val uri = FileProvider.getUriForFile(
+                context,
+                context.packageName + ".provider",
+                file
+            )
+            imageUri = uri
+            camLauncher.launch(uri)
+        }
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap!!.asImageBitmap(),
+                contentDescription = "FOTO TEMATICA",
+                modifier = Modifier.size(200.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        Button(onClick = {
+            camPermission.launch(Manifest.permission.CAMERA)
+        }) {
+            Text("TOMAR FOTO")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
+            navController.navigate("menu")
+        }) {
+            Text("VOLVER")
+        }
     }
 }

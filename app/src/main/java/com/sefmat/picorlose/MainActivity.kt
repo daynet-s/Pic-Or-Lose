@@ -21,16 +21,12 @@ import com.sefmat.picorlose.ui.theme.Camera
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel = LoginVM()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PicOrLoseTheme {
-                //Navegation()
-                Camera()
-                //Login(viewModel)
+                Navegation()
             }
         }
     }

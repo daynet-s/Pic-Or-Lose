@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PicOrLoseTheme {
-                Navegation()
-                //Camera()
+                //Navegation()
+                Camera()
                 //Login(viewModel)
             }
         }

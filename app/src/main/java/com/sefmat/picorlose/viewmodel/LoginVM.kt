@@ -4,8 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.sefmat.picorlose.model.ErrorMsg
-import com.sefmat.picorlose.model.LoginModel
+import com.sefmat.picorlose.data.model.ErrorMsg
+import com.sefmat.picorlose.data.model.LoginModel
 import com.sefmat.picorlose.repository.LoginRepository
 
 class LoginVM : ViewModel() {

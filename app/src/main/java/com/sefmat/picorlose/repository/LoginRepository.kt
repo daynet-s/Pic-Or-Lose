@@ -1,7 +1,7 @@
 package com.sefmat.picorlose.repository
 
-import com.sefmat.picorlose.model.ErrorMsg
-import com.sefmat.picorlose.model.LoginModel
+import com.sefmat.picorlose.data.model.ErrorMsg
+import com.sefmat.picorlose.data.model.LoginModel
 
 class LoginRepository {
     private var login = LoginModel()
@@ -9,6 +9,8 @@ class LoginRepository {
 
     fun getLogin(): LoginModel = login
     fun getErrorMsgs(): ErrorMsg = errors
+
+    // Habra que cambiar las funciones de abajo para que funcionen con AppDatabase
 
     // USUARIO Y CONTRASEÑA TEMPORALES
     fun validUsername(): Boolean {

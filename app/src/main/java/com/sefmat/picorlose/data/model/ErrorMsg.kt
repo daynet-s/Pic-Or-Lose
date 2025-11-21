@@ -1,4 +1,4 @@
-package com.sefmat.picorlose.model
+package com.sefmat.picorlose.data.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

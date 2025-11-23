@@ -2,10 +2,13 @@ package com.sefmat.picorlose.repository
 
 import com.sefmat.picorlose.data.model.ErrorMsg
 import com.sefmat.picorlose.data.model.LoginModel
+import com.sefmat.picorlose.data.model.UserDao
+import com.sefmat.picorlose.data.model.UserModel
 
-class LoginRepository {
+class LoginRepository (){
     private var login = LoginModel()
     private var errors = ErrorMsg()
+
 
     fun getLogin(): LoginModel = login
     fun getErrorMsgs(): ErrorMsg = errors

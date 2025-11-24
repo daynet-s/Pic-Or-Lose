@@ -1,10 +1,24 @@
 package com.sefmat.picorlose.data.model
 
 data class PictureModel(
-    val userId: Int,
-    val picId: Int,
+    val user_id: Int,
+    val pic_id: Int,
     val title: String,
-    val picture: String // BASE64
+    val picture: PictureDetails
+)
 
-    // SERAN LAS IMAGENES DE LA TEMATICA QUE HAYAN SIDO PUBLICADAS DURANTE EL DIA
+data class PictureDetails(
+    val access: String,
+    val path: String,
+    val name: String,
+    val type: String,
+    val size: Int,
+    val mime: String,
+    val meta: PictureMeta,
+    val url: String
+)
+
+data class PictureMeta(
+    val width: Int,
+    val height: Int
 )

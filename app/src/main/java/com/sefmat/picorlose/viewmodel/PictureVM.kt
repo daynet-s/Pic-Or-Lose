@@ -14,7 +14,7 @@ class PictureVM : ViewModel() {
 
     val pics: StateFlow<List<PictureModel>> = _pics
 
-    /*init {
+    init {
         fetchPics()
     }
 
@@ -22,5 +22,5 @@ class PictureVM : ViewModel() {
         viewModelScope.launch {
             _pics.value = repo.getPictures()
         }
-    }*/
+    }
 }

@@ -5,12 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.sefmat.picorlose.data.model.UserModel
 import com.sefmat.picorlose.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UserVM(private val repo: UserRepository) : ViewModel() {
     val username = MutableStateFlow("")
     val password = MutableStateFlow("")
-    val points = MutableStateFlow("")
+    val points = MutableStateFlow(0)
+    //val points = _points.asStateFlow()
 
     val users = MutableStateFlow<List<UserModel>>(emptyList())
 
@@ -21,6 +23,12 @@ class UserVM(private val repo: UserRepository) : ViewModel() {
     private fun loadUsers() {
         viewModelScope.launch {
             users.value = repo.getAll()
+        }
+    }
+
+    fun delAll() {
+        viewModelScope.launch {
+            repo.delAll()
         }
     }
 

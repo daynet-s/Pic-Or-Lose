@@ -50,6 +50,9 @@ import com.sefmat.picorlose.repository.UserRepository
 import com.sefmat.picorlose.viewmodel.PictureVM
 import com.sefmat.picorlose.viewmodel.UserVM
 import java.io.File
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+
+
 
 
 data class Usuario(val nombre:String, val puntos:Int)
@@ -104,8 +107,9 @@ fun Login(viewModel: LoginVM, navController: NavController) {
             onValueChange =  { newText -> viewModel.login.password = newText },
             label = { Text("Ingrese contraseña") },
             isError = !viewModel.verifyPassword(),
-            supportingText = { Text(viewModel.errorMsg.password, color = androidx.compose.ui.graphics.Color.Red) }
-            // Agregar linea para ocultar la contraseña
+            supportingText = { Text(viewModel.errorMsg.password, color = androidx.compose.ui.graphics.Color.Red)
+            },
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Button(

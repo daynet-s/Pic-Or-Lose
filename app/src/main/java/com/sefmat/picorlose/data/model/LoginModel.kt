@@ -19,5 +19,12 @@ data class UserModel (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val passwrd: String,
-    val points: Int // PARA LA LEADERBOARD DEL MENU (cambiar a int en algun momento)
+    val points: Int
+)
+
+data class UserAPI (
+    val name: String,
+    val passwrd: String,
+    val points: Int,
+    val email: String? = null  // TEMPORAL
 )

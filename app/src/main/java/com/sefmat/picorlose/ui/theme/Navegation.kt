@@ -45,10 +45,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import coil.compose.AsyncImage
 import com.sefmat.picorlose.data.model.AppDatabase
+import com.sefmat.picorlose.data.model.UserAPI
 import com.sefmat.picorlose.data.model.UserModel
 import com.sefmat.picorlose.repository.UserRepository
 import com.sefmat.picorlose.viewmodel.PictureVM
 import com.sefmat.picorlose.viewmodel.UserVM
+import com.sefmat.picorlose.viewmodel.UserVM_API
 import java.io.File
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 
@@ -62,6 +64,7 @@ fun Navegation() {
     val navController = rememberNavController()
     val loginViewModel = LoginVM()
     val pictureVM = PictureVM()
+    val userVM_api = UserVM_API()
 
     val context = LocalContext.current
 
@@ -77,7 +80,7 @@ fun Navegation() {
 
     NavHost(navController, startDestination = "login") {
         composable("login") { Login(loginViewModel, navController) }
-        composable("signup") { SignUp(userVM, navController)}
+        composable("signup") { SignUp(userVM_api, navController)}
         composable("menu") { Menu(navController) }
         composable("ranking") { Rankings(navController) }
         composable("userRanking") { MyInfo( userVM,navController) }
@@ -135,7 +138,7 @@ fun Login(viewModel: LoginVM, navController: NavController) {
 }
 
 @Composable
-fun SignUp(viewModel: UserVM, navController: NavController) {
+fun SignUp(viewModel: UserVM_API, navController: NavController) {
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
     val points by viewModel.points.collectAsState()
@@ -152,13 +155,23 @@ fun SignUp(viewModel: UserVM, navController: NavController) {
         )
 
         OutlinedTextField(value = username, onValueChange = { viewModel.username.value = it }, label = { Text("Nombre") })
-        OutlinedTextField(value = password, onValueChange = { viewModel.password.value = it }, label = { Text("password") })
+        OutlinedTextField(value = password, onValueChange = { viewModel.password.value = it }, label = { Text("password") }, visualTransformation = PasswordVisualTransformation())
         //OutlinedTextField(value = points, onValueChange = { viewModel.points.value = it })
 
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            viewModel.insertUser(UserModel(name = username, passwrd = password, points = points))
-            viewModel.username.value = ""; viewModel.password.value = ""; viewModel.points.value = 0
+            viewModel.insertUser(
+                UserAPI(
+                    name = username,
+                    passwrd = password,
+                    points = points,
+                    email = null
+                )
+            )
+
+            viewModel.username.value = ""
+            viewModel.password.value = ""
+            viewModel.points.value = 0
             navController.navigate("login")
         }) {
             Text("REGISTRAR")
@@ -310,6 +323,7 @@ fun MyInfo(viewModel: UserVM,navController: NavController) {
     val users by viewModel.users.collectAsState()
 
     // SOLUCION TEMPORAL, MUESTRA TODA LA TABLA USERS
+    // TAL VEZ CAMBIAR ESTO PARA QUE AGARRE UN USUARIO DE LA API EXTERNA???
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,

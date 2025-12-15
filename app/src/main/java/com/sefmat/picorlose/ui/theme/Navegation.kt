@@ -8,7 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,38 +28,29 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sefmat.picorlose.R
-import com.sefmat.picorlose.viewmodel.LoginVM
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import coil.compose.AsyncImage
-import com.sefmat.picorlose.data.model.AppDatabase
-import com.sefmat.picorlose.data.model.UserAPI
-import com.sefmat.picorlose.data.model.UserModel
-import com.sefmat.picorlose.repository.UserRepository
-import com.sefmat.picorlose.viewmodel.PictureVM
-import com.sefmat.picorlose.viewmodel.UserVM
-import com.sefmat.picorlose.viewmodel.UserVM_API
+import com.sefmat.picorlose.data.model.*
+import com.sefmat.picorlose.repository.*
+import com.sefmat.picorlose.viewmodel.*
+import com.sefmat.picorlose.R
 import java.io.File
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-
-
-
-
-data class Usuario(val nombre:String, val puntos:Int)
+import androidx.room.util.TableInfo
 
 @Composable
 fun Navegation() {
@@ -66,7 +59,8 @@ fun Navegation() {
     val pictureVM = PictureVM()
     val userVM_api = UserVM_API()
 
-    val context = LocalContext.current
+    // INICIALIZA LA BASE DE DATOS DE USUARIOS **LOCAL** (Deshabilitado por el momento)
+    /*val context = LocalContext.current
 
     val db by lazy {
         Room.databaseBuilder(
@@ -76,14 +70,14 @@ fun Navegation() {
         ).build()
     }
     val repo by lazy { UserRepository(db.userDao()) }
-    val userVM by lazy { UserVM(repo) }
+    val userVM by lazy { UserVM(repo) }*/
 
     NavHost(navController, startDestination = "login") {
         composable("login") { Login(loginViewModel, navController) }
         composable("signup") { SignUp(userVM_api, navController)}
         composable("menu") { Menu(navController) }
-        composable("ranking") { Rankings(navController) }
-        composable("userRanking") { MyInfo( userVM,navController) }
+        composable("ranking") { Rankings(userVM_api,navController) }
+        composable("userRanking") { MyInfo( userVM_api,navController) }
         composable("camera") { Camera(navController) }
         composable("todayphoto") { TodayPhotos(pictureVM, navController)}
     }
@@ -261,19 +255,9 @@ fun Menu(navController: NavController) {
 }
 
 @Composable
-fun Rankings(navController: NavController) {
-    val Usuarios = listOf(
-        Usuario("fau37", 340),
-        Usuario("polix", 335),
-        Usuario("daDestroyer", 315),
-        Usuario("User3928", 285),
-        Usuario("Lux1", 280),
-        Usuario("yoni", 245),
-        Usuario("juliii", 240),
-        Usuario("gus", 240),
-        Usuario("dieg77", 235),
-        Usuario("naxopro", 230)
-    ).sortedByDescending { it.puntos }
+fun Rankings(viewModel: UserVM_API, navController: NavController) {
+    val userInfo by viewModel.users.collectAsState()
+    val sortUsers = userInfo.sortedByDescending { it.points }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -284,15 +268,15 @@ fun Rankings(navController: NavController) {
         Spacer(modifier = Modifier.height(12.dp))
 
         // Codigo del ranking
-        androidx.compose.foundation.lazy.LazyColumn(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(400.dp),
             horizontalAlignment = Alignment.Start,
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
-            itemsIndexed(Usuarios) { index, usuario ->
-                RankingRow(position = index + 1, usuario = usuario)
+            itemsIndexed(sortUsers) { index, user ->
+                RankingRow(position = index + 1, user = user)
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -308,79 +292,35 @@ fun Rankings(navController: NavController) {
 }
 
 @Composable
-fun RankingRow(position: Int, usuario: Usuario) {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = "$position. ${usuario.nombre}")
-        Text(text = "${usuario.puntos} pts")
-    }
-}
+fun MyInfo(viewModel: UserVM_API,navController: NavController) {
+    val userInfo by viewModel.users.collectAsState()
 
-@Composable
-fun MyInfo(viewModel: UserVM,navController: NavController) {
-    val users by viewModel.users.collectAsState()
-
-    // SOLUCION TEMPORAL, MUESTRA TODA LA TABLA USERS
-    // TAL VEZ CAMBIAR ESTO PARA QUE AGARRE UN USUARIO DE LA API EXTERNA???
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+    if (userInfo.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Cargando...")
+        }
+    } else {
+        val user = userInfo.random() // Al azar por ahora
+        Column(
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Nombre",
-                        modifier = Modifier.weight(1f),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Puntos",
-                        modifier = Modifier.weight(1f),
-                        fontWeight = FontWeight.Bold
-                    )
+            UserItem(user) // SOLO 1 USUARIO
+
+            Button(
+                onClick = {
+                    navController.navigate("menu")
                 }
-                Divider()
+            ) {
+                Text("VOLVER")
             }
-            items(users) { user ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = user.name,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = user.points.toString(),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Divider()
-            }
-        }
-        Button(
-            onClick = {
-                navController.navigate("menu")
-            }
-        ) {
-            Text("VOLVER")
         }
     }
+
 }
 
 @Composable
@@ -493,5 +433,35 @@ fun TodayPhotos(viewModel: PictureVM = viewModel(), navController: NavController
         }) {
             Text("VOLVER")
         }
+    }
+}
+
+// ELEMENTOS QUE NO SON PAGINAS PERO SON UTILIZADOS
+@Composable
+fun UserItem (user: UserAPI) {
+    Card(
+        modifier = Modifier
+            .wrapContentWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Nombre: ${user.name}")
+            Text(text = "Puntaje: ${user.points}")
+        }
+    }
+}
+
+@Composable
+fun RankingRow(position: Int, user: UserAPI) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "$position. ${user.name}")
+        Text(text = "${user.points} pts")
     }
 }

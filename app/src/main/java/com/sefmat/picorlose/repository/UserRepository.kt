@@ -6,8 +6,8 @@ import com.sefmat.picorlose.data.model.UserModel
 import com.sefmat.picorlose.data.model.UserAPI
 import com.sefmat.picorlose.data.remote.RfInstance_Users
 
+// REPO DE USUARIOS BASE DE DATOS LOCAL
 class UserRepository(private val dao: UserDao) {
-    // FUNCIONES BASE DE DATOS
     suspend fun getAll() = dao.getAll()
     suspend fun insert(user: UserModel) = dao.insert(user)
     suspend fun delete(user: UserModel) = dao.delete(user)
@@ -15,6 +15,7 @@ class UserRepository(private val dao: UserDao) {
     suspend fun delAll() = dao.delAll()
 }
 
+// REPO DE USUARIOS API
 class UserRepository_API {
     // FUNCION API
     suspend fun getUsers(): List<UserAPI> {

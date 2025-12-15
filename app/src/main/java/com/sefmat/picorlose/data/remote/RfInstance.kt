@@ -3,6 +3,7 @@ package com.sefmat.picorlose.data.remote
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// INSTANCIA RETROFIT IMAGENES
 object RfInstance {
     val api: ApiService by lazy {
         Retrofit.Builder()
@@ -13,6 +14,7 @@ object RfInstance {
     }
 }
 
+// INSTANCIA RETROFIT USUARIOS
 object RfInstance_Users {
     val api: ApiService by lazy {
         Retrofit.Builder()

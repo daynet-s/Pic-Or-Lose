@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+// VIEWMODEL DE USUARIOS DE BASE DE DATOS LOCAL
 class UserVM(private val repo: UserRepository) : ViewModel() {
     val username = MutableStateFlow("")
     val password = MutableStateFlow("")
@@ -60,6 +61,7 @@ class UserVM(private val repo: UserRepository) : ViewModel() {
     }
 }
 
+// VIEWMODEL DE USUARIOS API
 class UserVM_API : ViewModel() {
     val username = MutableStateFlow("")
     val password = MutableStateFlow("")
